@@ -29,9 +29,9 @@ from torch.optim import lr_scheduler
 import models
 
 
-def get_model(args, width):
+def get_model(args, width, base=False):
 	""" Initiates a (ResNet18) model with arch specified by the args and with given width. """
-	model_name= args.model_name
+	model_name= args.base_model_name if base else args.model_name
 	half= args.half
 	device='cuda' if torch.cuda.is_available() else 'cpu'
 	
@@ -40,12 +40,18 @@ def get_model(args, width):
 
 	if torch.cuda.is_available():
 		ngpus= torch.cuda.device_count()
-		print(f'>>> Creating model {model_name} (width {width}) on {ngpus} GPU(s)')
+		if not base:
+			print(f'>>> Creating model {model_name} (width {width}) on {ngpus} GPU(s)')
+		else:
+			print(f'>>> BASELINE: Creating model {args.base_model_name} (width {width}) on {ngpus} GPU(s)')
 		if ngpus>1:
 			model= nn.DataParallel(model).cuda()
 			cudnn.benchmark = True
 	else:
-		print(f'>>> Creating model {model_name} (width {width}) on CPU')
+		if not base:
+			print(f'>>> Creating model {model_name} (width {width}) on CPU(s)')
+		else:
+			print(f'>>> BASELINE: Creating model {args.base_model_name} (width {width}) on CPU(s)')
 
 	if half:
 		print('Using half precision except in BN layer!')
@@ -128,10 +134,10 @@ def get_num_W_tot(args, width, ltypes=['Linear', 'Conv2d']):
 	Computes the number of weights in the model specified in args and by the argument width.
 	Operates by building this model, getting the tensor dims of each relevant layer (specified in ltypes), and summing over the products of dims of each tensor.
 	"""
-	print(f'\n==> To count the number of weights in model {args.model_name} (width {width}):')
-	_model = get_model(args, width)
+	print(f'\n==> To count the number of weights in model {args.base_model_name} (width {width}):')
+	_model = get_model(args, width, base=True)
 	tensor_dims = get_tensor_dims(_model, ltypes)
-	print(f'... Done counting; deleting model {args.model_name} (width {width}) <==\n')
+	print(f'... Done counting; deleting model {args.base_model_name} (width {width}) <==\n')
 	del _model # don't need the model any more
 	num_W= get_num_W(tensor_dims)  # dict: key= layer name, value= num weights in layer
 	num_W_tot= sum(num_W.values()) # total number of weights in model
