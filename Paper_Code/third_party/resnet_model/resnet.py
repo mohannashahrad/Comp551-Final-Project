@@ -68,7 +68,7 @@ class Bottleneck(nn.Module):
 
 
 class resnet(nn.Module):
-    def __init__(self, block, num_blocks, num_out_conv1, out_ratio, num_classes=10, num_in_channels=3):
+    def __init__(self, block, num_blocks, num_out_conv1=64, out_ratio=[1,2,4,8], num_classes=10, num_in_channels=3):
         super(resnet, self).__init__()
         self.in_planes = num_out_conv1
 
@@ -107,17 +107,17 @@ def resnet18(num_in_channels, num_classes, num_out_conv1=64, out_ratio=[1,2,4,8]
 def resnet18r(num_in_channels, num_classes, num_out_conv1=64, out_ratio=[1,2,4,8]):
     return resnet(BasicBlock, num_blocks=[1,1,1,1], num_out_conv1=num_out_conv1, out_ratio=out_ratio, num_classes=num_classes, num_in_channels=num_in_channels)
 
-def resnet34():
-    return resnet(BasicBlock, [3,4,6,3])
+def resnet34(num_in_channels, num_classes, num_out_conv1=64, out_ratio=[1,2,4,8]):
+    return resnet(BasicBlock, [3,4,6,3], num_out_conv1=num_out_conv1, out_ratio=out_ratio, num_classes=num_classes, num_in_channels=num_in_channels)
 
-def resnet50():
-    return resnet(Bottleneck, [3,4,6,3])
+def resnet50(num_in_channels, num_classes, num_out_conv1=64, out_ratio=[1,2,4,8]):
+    return resnet(Bottleneck, [3,4,6,3], num_out_conv1=num_out_conv1, out_ratio=out_ratio, num_classes=num_classes, num_in_channels=num_in_channels)
 
-def resnet101():
-    return resnet(Bottleneck, [3,4,23,3])
+def resnet101(num_in_channels, num_classes, num_out_conv1=64, out_ratio=[1,2,4,8]):
+    return resnet(Bottleneck, [3,4,23,3], num_out_conv1=num_out_conv1, out_ratio=out_ratio, num_classes=num_classes, num_in_channels=num_in_channels)
 
-def resnet152():
-    return resnet(Bottleneck, [3,8,36,3])
+def resnet152(num_in_channels, num_classes, num_out_conv1=64, out_ratio=[1,2,4,8]):
+    return resnet(Bottleneck, [3,8,36,3], num_out_conv1=num_out_conv1, out_ratio=out_ratio, num_classes=num_classes, num_in_channels=num_in_channels)
 
 
 def test():
