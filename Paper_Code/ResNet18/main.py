@@ -26,9 +26,10 @@ import torch.backends.cudnn as cudnn
 from utils import *
 from get_data import get_dataset
 from recorder import Recorder
+from tqdm import tqdm
 
 
-parser = argparse.ArgumentParser(description='Training a ResNet18 on CIFAR or SVHN.')
+parser = argparse.ArgumentParser(description='Training a ResNet model on CIFAR or SVHN.')
 
 parser.add_argument('--seed', type=int, default=None, help='random seed')
 parser.add_argument('--half', default=False, action='store_true', 
@@ -57,8 +58,10 @@ parser.add_argument('--data_dir', type=str, default='./data',
 parser.add_argument('--mbs', type=int, default=128, help='mini-batch size')
 
 #==== model: arch and sparsity
-parser.add_argument('--model_name', type=str, default='resnet18', 
+parser.add_argument('--model_name', type=str, default='resnet50', 
                     help='name of the model architecture')
+parser.add_argument('--base_model_name', type=str, default='resnet18', 
+                    help='name of the baseline model architecture') # Added argument
 parser.add_argument('--base_width', type=int, default=64, 
                     help='baseline model width (number of output channels in layer conv1) (default: 64)')
 parser.add_argument('--width', type=int, default=64, 
@@ -128,7 +131,7 @@ def main():
     # ========== TRAINING ==========
     # ==============================
     print('\n>>> Starting training!')
-    for epoch in range(args.num_epochs):
+    for epoch in tqdm(range(args.num_epochs)):
         
         train_loss, train_acc = train(train_loader, model, criterion, optimizer, epoch, 
                                         sparse, smask, lnames_sorted, num_wtf, device)

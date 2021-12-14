@@ -32,7 +32,7 @@ base_range = [8, 18]
 width_range = [8, 18, 64]
 
 
-datasets = ['cifar100','cifar100','svhn' ]
+datasets = ['cifar10','cifar100','svhn' ]
 
 job_name = 'job1'
 
